@@ -1,10 +1,10 @@
-import bot from "./assets/bog.svg";
+import bot from "./assets/bot.svg";
 import user from "./assets/user.svg";
 
 const form = document.querySelector("form");
 const chatContainer = document.querySelector("#chat_container");
 
-let loadInterval;
+let loadInterval
 
 function loader(element) {
   element.textContent = "";
@@ -13,13 +13,13 @@ function loader(element) {
     element.textContent += ".";
 
     if (element.textContent === "....") {
-      element.textContent === "";
+      element.textContent = "";
     }
-  }, 3000);
+  }, 300);
 }
 
 function typeText(element, text) {
-  let index = 0;
+  let index = 0
 
   let interval = setInterval(() => {
     if (index < text.length) {
@@ -36,7 +36,7 @@ function generateUniqueId() {
   const randomNumber = Math.random();
   const hexadecimalString = randomNumber.toString(16);
 
-  return `id-${timestamp}${hexadecimalString}`;
+  return `id-${timestamp}-${hexadecimalString}`;
 }
 
 function chatStripe(isAi, value, uniqueId) {
@@ -56,3 +56,29 @@ function chatStripe(isAi, value, uniqueId) {
     `
   )
 }
+
+const handleSubmit = async (e) => {
+  removeEventListener.preventDefault();
+
+  const data = new FormData(form);
+
+  chatContainer.innerHTML += chatStripe(false, data.get('prompt'));
+
+  form.reset();
+
+  const uniqueId = generateUniqueId();
+  chatContainer.innerHTML += chatStripe(true, " ", uniqueId);
+
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+
+  const messageDiv = document.getElementById(uniqueId);
+
+  loader(messageDiv);
+}
+
+form.addEventListener('submit', handleSubmit)
+form.addEventListener('keyup', (e) => {
+  if (e.keyCode === 13) {
+    handleSubmit(e)
+  }
+})
